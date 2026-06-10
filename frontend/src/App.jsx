@@ -38,8 +38,18 @@ export default function App() {
             onClick={wallet.connect}
             className="rounded-lg border border-slate-600 bg-slate-800 px-5 py-2.5 text-sm transition-colors hover:border-indigo-500"
           >
-            {wallet.connected ? "Connected" : "Connect MetaMask"}
+            {wallet.connected
+              ? "Reconnect / Change account"
+              : "Connect MetaMask"}
           </button>
+          {wallet.connected && (
+            <button
+              onClick={wallet.disconnect}
+              className="rounded-lg border border-rose-500/60 bg-rose-500/10 px-5 py-2.5 text-sm transition-colors hover:border-rose-400"
+            >
+              Disconnect
+            </button>
+          )}
           <span className="text-sm text-slate-400">
             {wallet.connected
               ? shortAddress(wallet.address)
