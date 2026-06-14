@@ -34,14 +34,14 @@ export default function App() {
       <header className="border-b border-slate-700 px-6 pt-8 pb-4 text-center">
         <h1 className="text-3xl font-bold">Digital Notary</h1>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <button
-            onClick={wallet.connect}
-            className="rounded-lg border border-slate-600 bg-slate-800 px-5 py-2.5 text-sm transition-colors hover:border-indigo-500"
-          >
-            {wallet.connected
-              ? "Reconnect / Change account"
-              : "Connect MetaMask"}
-          </button>
+          {!wallet.connected && (
+            <button
+              onClick={wallet.connect}
+              className="rounded-lg border border-slate-600 bg-slate-800 px-5 py-2.5 text-sm transition-colors hover:border-indigo-500"
+            >
+              Connect MetaMask
+            </button>
+          )}
           {wallet.connected && (
             <button
               onClick={wallet.disconnect}

@@ -22,6 +22,60 @@ export async function uploadToPinata(file, jwt) {
   return data.IpfsHash;
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const base64 = result.includes(",") ? result.split(",")[1] : result;
+      resolve(base64);
+    };
+    reader.onerror = () =>
+      reject(new Error("Could not convert file to base64."));
+    reader.readAsDataURL(file);
+  });
+}
+
+export async function uploadRegistryPayloadToPinata(file, registryNumber, jwt) {
+  const trimmedRegistryNumber = registryNumber.trim();
+  const documentBase64 = await fileToBase64(file);
+  const payload = {
+    pinataMetadata: {
+      name: trimmedRegistryNumber,
+    },
+    pinataContent: {
+      registryNumber: trimmedRegistryNumber,
+      documentBase64,
+    },
+  };
+
+  const res = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwt}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    let details = "";
+    try {
+      const body = await res.json();
+      const reason = body?.error?.reason;
+      const message = body?.error?.details || body?.error?.message;
+      details = [reason, message].filter(Boolean).join(" - ");
+    } catch {
+      // Ignore JSON parse errors and fall back to status-only message.
+    }
+    throw new Error(
+      `Pinata: HTTP ${res.status}${details ? ` (${details})` : ""}`,
+    );
+  }
+  const data = await res.json();
+  return data.IpfsHash;
+}
+
 const ERROR_MAP = {
   NotAdmin: "Admin permissions required.",
   NotNotary: "Notary permissions required.",
