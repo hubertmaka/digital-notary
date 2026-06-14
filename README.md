@@ -3,6 +3,8 @@
 Digital Notary is a blockchain application for land registry audit.
 It stores only document hashes and metadata on-chain, while document content can be stored in IPFS.
 
+![Architektura i przeplyw danych](docs/architektura-przeplyw-danych.png)
+
 ## Project Structure
 
 ```text
